@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class CookieUtil {
     private final static String COOKIE_DOMAIN = ".wolf-and-spice.xin";
+
     private final static String COOKIE_LOGIN = "mmall_login_token";
 
     /**
@@ -21,8 +22,8 @@ public class CookieUtil {
      */
     public static void writeLoginToken(HttpServletResponse response, String token){
         Cookie cookie = new Cookie(COOKIE_LOGIN, token);
-        cookie.setDomain(COOKIE_DOMAIN);
-        cookie.setPath("/");
+//        cookie.setDomain(COOKIE_DOMAIN);
+//        cookie.setPath("/");
 
         /*
          * 单位是秒

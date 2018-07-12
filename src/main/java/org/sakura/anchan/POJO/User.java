@@ -1,46 +1,35 @@
 package org.sakura.anchan.POJO;
 
-/**
- * Created by Anchan on 2018/7/12.
- */
+import lombok.*;
+
+import java.util.Date;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class User {
+    /**用户id*/
     private Integer id;
-
-    private String userName;
-
+    /**用户名*/
+    private String username;
+    /**密码*/
     private String password;
+    /**邮箱*/
+    private String email;
+    /**手机号*/
+    private String phone;
+    /**修改密码的问题*/
+    private String question;
+    /**修改密码的问题的答案*/
+    private String answer;
+    /**角色，用户or管理员*/
+    private Integer role;
+    /**创建时间*/
+    private Date createTime;
+    /**更新时间*/
+    private Date updateTime;
 
-    private Integer age;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName == null ? null : userName.trim();
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password == null ? null : password.trim();
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
 }
