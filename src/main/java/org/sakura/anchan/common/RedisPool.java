@@ -1,0 +1,79 @@
+package org.sakura.anchan.common;
+
+import org.sakura.anchan.util.PropertiesUtil;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+
+/**
+ * Created by Anchan on 2018/5/5.
+ */
+public class RedisPool {
+    /**
+     * jedis连接池
+     */
+    private static JedisPool pool;
+    /**
+     * 最大连接数
+     */
+    private static Integer maxTotal = PropertiesUtil.getIntegerProperty("redis.max.total", "20");
+    /**
+     * 在jedispool中最大的idle状态（空闲）的jedis实例的个数
+     */
+    private static Integer maxIdle = PropertiesUtil.getIntegerProperty("redis.max.idle", "10");
+    /**
+     * 在jedispool中最小的idel状态（空闲）的jedis实例的个数
+     */
+    private static Integer minIdle = PropertiesUtil.getIntegerProperty("redis.min.idle","2");
+    /**
+     * 在borrow（借）一个jedis实例的时候，是否要进行验证操作，如果赋值为true则每次接的肯定是可用的
+     */
+    private static Boolean testOnBorrow = PropertiesUtil.getBooleanProperty("redis.test.borrow","true");
+    /**
+     * 在return（还）一个jedis实例的时候，是否要进行验证操作，如果赋值为true则每次还的肯定是可用的
+     */
+    private static Boolean testOnReturn = PropertiesUtil.getBooleanProperty("redis.test.return","true");
+
+    private static String ip = PropertiesUtil.getProperty("redis.ip");
+
+    private static Integer port = PropertiesUtil.getIntegerProperty("redis.port");
+    private static void initPool(){
+        JedisPoolConfig config = new JedisPoolConfig();
+        config.setMaxTotal(maxTotal);
+        config.setMaxIdle(maxIdle);
+        config.setMinIdle(minIdle);
+        config.setTestOnBorrow(testOnBorrow);
+        config.setTestOnReturn(testOnReturn);
+        config.setBlockWhenExhausted(true);//连接耗尽时是否阻塞。false会抛出异常。true阻塞到直至超时
+        pool = new JedisPool(config, ip, port, 1000*2);
+    }
+
+    static {
+        initPool();
+    }
+
+    public static Jedis getJedis(){
+        return pool.getResource();
+    }
+    public static void returnJedis(Jedis jedis){
+
+            pool.returnResource(jedis);
+    }
+    public static void returnBrokenJedis(Jedis jedis){
+        pool.returnBrokenResource(jedis);
+    }
+
+    public static void main(String[] args) {
+        System.out.println("maxTotal=" +maxTotal);
+        System.out.println("maxIdle="+maxIdle);
+        System.out.println("minIdle="+minIdle);
+        System.out.println("testOnBorrow="+testOnBorrow);
+        System.out.println("testOnReturn="+testOnReturn);
+        Jedis jedis = pool.getResource();
+        jedis.set("anchan","hello");
+        jedis.get("anchan");
+        returnJedis(jedis);
+        pool.destroy();
+        System.out.println("system End");
+    }
+}
